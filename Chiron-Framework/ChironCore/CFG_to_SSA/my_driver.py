@@ -34,6 +34,42 @@ def compute_dominator_tree(cfg):
 
 
 
+def compute_dominance_frontiers(cfg, dom_tree):
+    """
+    Computes the dominance frontiers for each node in the control flow graph using
+    a bottom-up traversal of the dominator tree.
+    
+    Parameters:
+        cfg (ChironCFG): The control flow graph as a ChironCFG object.
+        dom_tree (nx.DiGraph): The dominator tree as a directed graph.
+        
+    Returns:
+        dict: A dictionary where keys are nodes and values are sets representing their dominance frontiers.
+    """
+    graph = cfg.nxgraph
+    idom = nx.immediate_dominators(graph, cfg.entry)
+    
+    dominance_frontier = {node: set() for node in graph.nodes()}
+    
+    # Perform a bottom-up traversal of the dominator tree
+    postorder = list(nx.dfs_postorder_nodes(dom_tree, source=cfg.entry))
+    
+    for node in postorder:
+        # Compute DF_local(X)
+        for successor in graph.successors(node):
+            if idom[successor] != node:
+                dominance_frontier[node].add(successor)
+        
+        # Compute DF_up(Z)
+        for child in dom_tree.successors(node):
+            for y in dominance_frontier[child]:
+                if idom[y] != node:
+                    dominance_frontier[node].add(y)
+    
+    return dominance_frontier
+
+
+
 def build_SSA(ir, cfg):
     myfile.print_ir(ir)
     myfile.print_basic_blocks(cfg)
@@ -41,3 +77,6 @@ def build_SSA(ir, cfg):
 
     dom_tree = compute_dominator_tree(cfg)
     myfile.print_dominator_tree(dom_tree)
+
+    dom_frontiers = compute_dominance_frontiers(cfg, dom_tree)
+    myfile.print_dominance_frontiers(dom_frontiers)

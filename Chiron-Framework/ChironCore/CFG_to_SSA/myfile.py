@@ -90,3 +90,15 @@ def print_dominator_tree(dom_tree):
     for parent in dom_tree.nodes():
         children = list(dom_tree.successors(parent))
         print(f"{parent} -> {', '.join(map(str, children))}" if children else f"{parent} -> []")
+
+
+
+def print_dominance_frontiers(dominance_frontier):
+    """
+    Prints the dominance frontiers in a readable format.
+    
+    Parameters:
+        dominance_frontier (dict): A dictionary where keys are nodes and values are sets representing their dominance frontiers.
+    """
+    for node, frontier in dominance_frontier.items():
+        print(f"DF({node}) -> {', '.join(map(str, frontier)) if frontier else '∅'}")
