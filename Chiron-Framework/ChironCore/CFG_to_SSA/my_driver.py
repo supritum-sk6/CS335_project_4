@@ -2,6 +2,7 @@ import CFG_to_SSA.myfile as myfile
 import networkx as nx
 from networkx.drawing.nx_agraph import to_agraph
 import ChironAST.ChironAST as ChironAST
+from queue import Queue
 
 
 
@@ -117,6 +118,34 @@ def nodes_where_each_var_occur(var_set, cfg):
 
 
 
+def var_identify_nodes_requiring_phi_functions_map(var_set, var_bb_map, cfg, dom_frontiers):
+    var_phi_nodes_map = {key:[] for key in var_set}
+    iteration_count = 0
+    basic_blocks = cfg.nxgraph.nodes()
+    has_already = {key:0 for key in basic_blocks}
+    work = {key:0 for key in basic_blocks}
+
+    w = Queue()
+
+    for v in var_set:
+        iteration_count = iteration_count + 1
+        for x in var_bb_map:
+            work[x] = iteration_count
+            w.put(x)
+        
+        while(not w.empty):
+            x = w.get()
+            for y in dom_frontiers[x]:
+                if(has_already[y] < iteration_count):
+                    var_phi_nodes_map[v].append(y)
+                    has_already[y] = iteration_count
+                    if(work[y] < iteration_count):
+                        work[y] = iteration_count
+                        w.put(y)
+    return var_phi_nodes_map
+
+
+
 def build_SSA(ir, cfg):
     myfile.print_ir(ir)
     myfile.print_basic_blocks(cfg)
@@ -139,4 +168,10 @@ def build_SSA(ir, cfg):
     print("\n\nvar_bb_map...")
     for key, obj_set in var_bb_map.items():
         field_values = [obj.name for obj in obj_set]  # Extract 'field' attribute
-        print(f"{key}: {field_values}")
+        print(f"{key.varname}: {field_values}")
+    
+    var_phi_nodes_map = var_identify_nodes_requiring_phi_functions_map(var_set, var_bb_map, cfg, dom_frontiers)
+    print("\n\nvar_phi_nodes_map...")
+    for key, obj_set in var_bb_map.items():
+        field_values = [obj.name for obj in obj_set]  # Extract 'field' attribute
+        print(f"{key.varname}: {field_values}")
