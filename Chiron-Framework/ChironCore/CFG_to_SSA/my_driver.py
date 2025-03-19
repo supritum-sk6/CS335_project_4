@@ -1,6 +1,7 @@
 import CFG_to_SSA.myfile as myfile
 import networkx as nx
 from networkx.drawing.nx_agraph import to_agraph
+import ChironAST.ChironAST as ChironAST
 
 
 
@@ -91,6 +92,18 @@ def dump_dominator_tree(dom_tree, filename="dominator_tree"):
 
 
 
+def variable_list(ir):
+    var_list = set()
+    for idx, item in enumerate(ir):
+        if(isinstance(item[0], ChironAST.AssignmentCommand)):
+            curr_var = item[0].lvar
+            # if(curr_var not in var_list):
+            print(item[0])
+            var_list.add(curr_var.varname)
+    return var_list
+
+
+
 def build_SSA(ir, cfg):
     myfile.print_ir(ir)
     myfile.print_basic_blocks(cfg)
@@ -102,3 +115,6 @@ def build_SSA(ir, cfg):
 
     dom_frontiers = compute_dominance_frontiers(cfg, dom_tree)
     myfile.print_dominance_frontiers(dom_frontiers)
+
+    var_list = variable_list(ir)
+    print(var_list)
