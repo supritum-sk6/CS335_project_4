@@ -97,7 +97,7 @@ def variable_list(ir):
     var_set = set()
     for idx, item in enumerate(ir):
         if(isinstance(item[0], ChironAST.AssignmentCommand)):
-            curr_var = item[0].lvar
+            curr_var = item[0].lvar.varname
             # if(curr_var not in var_set):
             # print(item[0])
             var_set.add(curr_var)
@@ -112,7 +112,7 @@ def nodes_where_each_var_occur(var_set, cfg):
         instrlist = curr_block.instrlist
         for idx, item in enumerate(instrlist):
             if(isinstance(item[0], ChironAST.AssignmentCommand)):
-                curr_var = item[0].lvar
+                curr_var = item[0].lvar.varname
                 var_bb_map[curr_var].add(curr_block)
     return var_bb_map
 
@@ -129,11 +129,11 @@ def var_identify_nodes_requiring_phi_functions_map(var_set, var_bb_map, cfg, dom
 
     for v in var_set:
         iteration_count = iteration_count + 1
-        for x in var_bb_map:
+        for x in var_bb_map[v]:
             work[x] = iteration_count
             w.put(x)
         
-        while(not w.empty):
+        while(not w.empty()):
             x = w.get()
             for y in dom_frontiers[x]:
                 if(has_already[y] < iteration_count):
@@ -162,16 +162,16 @@ def build_SSA(ir, cfg):
     # print(var_set)
     print("\n\nvar_set...")
     for item in var_set:
-        print(item.varname)
+        print(item)
     
     var_bb_map = nodes_where_each_var_occur(var_set, cfg)
     print("\n\nvar_bb_map...")
     for key, obj_set in var_bb_map.items():
         field_values = [obj.name for obj in obj_set]  # Extract 'field' attribute
-        print(f"{key.varname}: {field_values}")
+        print(f"{key}: {field_values}")
     
     var_phi_nodes_map = var_identify_nodes_requiring_phi_functions_map(var_set, var_bb_map, cfg, dom_frontiers)
     print("\n\nvar_phi_nodes_map...")
-    for key, obj_set in var_bb_map.items():
+    for key, obj_set in var_phi_nodes_map.items():
         field_values = [obj.name for obj in obj_set]  # Extract 'field' attribute
-        print(f"{key.varname}: {field_values}")
+        print(f"{key}: {field_values}")

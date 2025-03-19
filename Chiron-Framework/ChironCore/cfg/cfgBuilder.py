@@ -20,10 +20,11 @@ from networkx.drawing.nx_agraph import to_agraph
 def buildCFG(ir, cfgName="", isSingle=False):
 
     startBB = BasicBlock('START')
+    bb_0 = BasicBlock(str(0))
     endBB = BasicBlock('END')
-    leaderIndices = {0, len(ir)}
-    leader2IndicesMap = {startBB : 0, endBB : len(ir)}
-    indices2LeadersMap = {0: startBB, len(ir): endBB}
+    leaderIndices = {-1, 0, len(ir)}
+    leader2IndicesMap = {startBB : -1, bb_0 : 0, endBB : len(ir)}
+    indices2LeadersMap = {-1: startBB, 0: bb_0, len(ir): endBB}
 
     print(leaderIndices)
 
@@ -84,12 +85,14 @@ def buildCFG(ir, cfgName="", isSingle=False):
     for currLeader in leader2IndicesMap.keys():
         leaderIdx = leader2IndicesMap[currLeader]
         currIdx = leaderIdx
-        while (currIdx < len(ir)):
+        while (currIdx>=0 and currIdx < len(ir)):
             currLeader.append((ir[currIdx][0], currIdx))
             currIdx += 1
             if currIdx in leaderIndices: break
 
     # adding edges
+    cfg.add_edge(startBB, bb_0, label='trivial_edge', color='blue')
+    cfg.add_edge(startBB, endBB, label='trivial_edge', color='blue')
     for node in cfg:
         listSize = len(node.instrlist)
         if listSize:
