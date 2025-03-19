@@ -178,6 +178,12 @@ if __name__ == "__main__":
         action="store_true",
     )
     cmdparser.add_argument(
+        "-ssa_gen",
+        "--single_static_assignment",
+        help="Generate the SSA of the given turtle program",
+        action="store_true",
+    )
+    cmdparser.add_argument(
         "-dump",
         "--dump_ir",
         help="Dump the IR to a .kw (pickle file)",
@@ -229,6 +235,9 @@ if __name__ == "__main__":
     if args.dump_cfg:
         cfgB.dumpCFG(cfg, "control_flow_graph")
         # set the cfg of the program.
+    
+    if args.single_static_assignment:
+        my_driver.build_SSA(ir, cfg)
 
     if args.ir:
         irHandler.pretty_print(irHandler.ir)
@@ -394,5 +403,3 @@ if __name__ == "__main__":
             writer = csv.writer(file)
             writer.writerows(spectrum)
         print("DONE..")
-
-my_driver.build_SSA(ir, cfg)
