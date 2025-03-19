@@ -93,14 +93,27 @@ def dump_dominator_tree(dom_tree, filename="dominator_tree"):
 
 
 def variable_list(ir):
-    var_list = set()
+    var_set = set()
     for idx, item in enumerate(ir):
         if(isinstance(item[0], ChironAST.AssignmentCommand)):
             curr_var = item[0].lvar
-            # if(curr_var not in var_list):
-            print(item[0])
-            var_list.add(curr_var.varname)
-    return var_list
+            # if(curr_var not in var_set):
+            # print(item[0])
+            var_set.add(curr_var)
+    return var_set
+
+
+
+def nodes_where_each_var_occur(var_set, cfg):
+    var_bb_map = {key: set() for key in var_set}
+    basic_blocks = cfg.nxgraph.nodes()
+    for curr_block in basic_blocks:
+        instrlist = curr_block.instrlist
+        for idx, item in enumerate(instrlist):
+            if(isinstance(item[0], ChironAST.AssignmentCommand)):
+                curr_var = item[0].lvar
+                var_bb_map[curr_var].add(curr_block)
+    return var_bb_map
 
 
 
@@ -116,5 +129,14 @@ def build_SSA(ir, cfg):
     dom_frontiers = compute_dominance_frontiers(cfg, dom_tree)
     myfile.print_dominance_frontiers(dom_frontiers)
 
-    var_list = variable_list(ir)
-    print(var_list)
+    var_set = variable_list(ir)
+    # print(var_set)
+    print("\n\nvar_set...")
+    for item in var_set:
+        print(item.varname)
+    
+    var_bb_map = nodes_where_each_var_occur(var_set, cfg)
+    print("\n\nvar_bb_map...")
+    for key, obj_set in var_bb_map.items():
+        field_values = [obj.name for obj in obj_set]  # Extract 'field' attribute
+        print(f"{key}: {field_values}")
