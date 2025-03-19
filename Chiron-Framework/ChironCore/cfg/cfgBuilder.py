@@ -118,12 +118,12 @@ def dumpCFG(cfg, filename="out"):
     G = cfg.nxgraph
 
     # generating custom labels for graph nodes
-    labels = {}
-    for node in cfg:
-        labels[node] = node.label()
-        # print("bb name : " + node.name + ", ir Id = " + str(node.irID))
+    # labels = {}
+    # for node in cfg:
+    #     labels[node] = node.label()
+    #     # print("bb name : " + node.name + ", ir Id = " + str(node.irID))
 
-    G = nx.relabel_nodes(G, labels)
+    # G = nx.relabel_nodes(G, labels)
     A = to_agraph(G)
     A.layout('dot')
     A.draw(filename + ".png")

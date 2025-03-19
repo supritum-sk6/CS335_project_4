@@ -1,5 +1,6 @@
 import CFG_to_SSA.myfile as myfile
 import networkx as nx
+from networkx.drawing.nx_agraph import to_agraph
 
 
 
@@ -70,6 +71,26 @@ def compute_dominance_frontiers(cfg, dom_tree):
 
 
 
+def dump_dominator_tree(dom_tree, filename="dominator_tree"):
+    """
+    Generates a PNG image of the dominator tree.
+    
+    Parameters:
+        dom_tree (nx.DiGraph): The dominator tree as a directed graph.
+        filename (str): The filename for the output image (default: "dominator_tree").
+    """
+    # labels = {}
+    # for node in dom_tree:
+    #     labels[node] = node.label()
+    #     # print("bb name : " + node.name + ", ir Id = " + str(node.irID))
+
+    # dom_tree = nx.relabel_nodes(dom_tree, labels)
+    A = to_agraph(dom_tree)
+    A.layout('dot')
+    A.draw(filename + ".png")
+
+
+
 def build_SSA(ir, cfg):
     myfile.print_ir(ir)
     myfile.print_basic_blocks(cfg)
@@ -77,6 +98,7 @@ def build_SSA(ir, cfg):
 
     dom_tree = compute_dominator_tree(cfg)
     myfile.print_dominator_tree(dom_tree)
+    dump_dominator_tree(dom_tree)
 
     dom_frontiers = compute_dominance_frontiers(cfg, dom_tree)
     myfile.print_dominance_frontiers(dom_frontiers)
