@@ -27,9 +27,9 @@ class PhiFunction(Instruction):
         self.rhs = ""
     
     def compose_rhs(self):
-        self.rhs = f"({', '.join(f'{self.var}_{i}' for i in self.rhs_list)})"
+        self.rhs = f"phi({', '.join(f'{self.var.__str__()}_{i}' for i in self.rhs_list)})"
     
-    def ret_instruction(self):
+    def __str__(self):
         self.compose_rhs()
         return self.var.__str__() + " = " + self.rhs.__str__()
 

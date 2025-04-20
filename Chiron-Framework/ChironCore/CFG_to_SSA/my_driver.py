@@ -146,32 +146,47 @@ def var_identify_nodes_requiring_phi_functions_map(var_set, var_bb_map, cfg, dom
 
 
 
+def place_phi_functions(var_phi_nodes_map):
+    for key in var_phi_nodes_map:
+        list_bb = var_phi_nodes_map[key]
+        for bb in list_bb:
+            phi_func = ChironAST.PhiFunction(key)
+            bb.instrlist.insert(0, (phi_func, 0))
+
+
+
 def build_SSA(ir, cfg):
     myfile.print_ir(ir)
     myfile.print_basic_blocks(cfg)
-    myfile.print_edges(cfg)
+    # myfile.print_edges(cfg)
 
     dom_tree = compute_dominator_tree(cfg)
-    myfile.print_dominator_tree(dom_tree)
-    dump_dominator_tree(dom_tree)
+    # myfile.print_dominator_tree(dom_tree)
+    # dump_dominator_tree(dom_tree)
 
     dom_frontiers = compute_dominance_frontiers(cfg, dom_tree)
-    myfile.print_dominance_frontiers(dom_frontiers)
+    # myfile.print_dominance_frontiers(dom_frontiers)
 
     var_set = variable_list(ir)
     # print(var_set)
-    print("\n\nvar_set...")
-    for item in var_set:
-        print(item)
+    # print("\n\nvar_set...")
+    # for item in var_set:
+        # print(item)
     
     var_bb_map = nodes_where_each_var_occur(var_set, cfg)
-    print("\n\nvar_bb_map...")
-    for key, obj_set in var_bb_map.items():
-        field_values = [obj.name for obj in obj_set]  # Extract 'field' attribute
-        print(f"{key}: {field_values}")
+    # print("\n\nvar_bb_map...")
+    # for key, obj_set in var_bb_map.items():
+        # field_values = [obj.name for obj in obj_set]  # Extract 'field' attribute
+        # print(f"{key}: {field_values}")
     
     var_phi_nodes_map = var_identify_nodes_requiring_phi_functions_map(var_set, var_bb_map, cfg, dom_frontiers)
     print("\n\nvar_phi_nodes_map...")
     for key, obj_set in var_phi_nodes_map.items():
         field_values = [obj.name for obj in obj_set]  # Extract 'field' attribute
         print(f"{key}: {field_values}")
+    
+    place_phi_functions(var_phi_nodes_map)
+    
+    myfile.print_basic_blocks(cfg)
+
+    myfile.print_ir(ir)
