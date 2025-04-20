@@ -4,6 +4,29 @@ from networkx.drawing.nx_agraph import to_agraph
 import ChironAST.ChironAST as ChironAST
 from queue import Queue
 
+from antlr4 import *
+from turtparse.tlangLexer import tlangLexer
+
+import CFG_to_SSA.rename_file as rename_file
+
+
+
+# class Stack:
+#     def __init__(self):
+#         self.items = []
+
+#     def push(self, value):
+#         self.items.append(value)
+
+#     def pop(self):
+#         return self.items.pop() if self.items else None
+
+#     def is_empty(self):
+#         return len(self.items) == 0
+
+#     def peek(self):
+#         return self.items[-1] if self.items else None
+
 
 
 def compute_dominator_tree(cfg):
@@ -154,14 +177,52 @@ def place_phi_functions(var_phi_nodes_map):
             bb.instrlist.insert(0, (phi_func, 0))
 
 
+# def search_renaming_variables(x, dom_tree):
+#     if x.instrlist:
+#         for instr, idx in x.instrlist:
+#             if(not isinstance(instr, ChironAST.PhiFunction)):
+#                 if(isinstance(instr, ChironAST.AssignmentCommand)):
+
+
+
+
+# def renaming_variables(var_set, cfg, dom_tree):
+#     for v in var_set:
+#         c = {key:0 for key in var_set}
+#         s = {key: Stack() for key in var_set}
+    
+#     # Adjacency list (outgoing neighbors)
+#     cfg_adj_dict = {node: list(cfg.nxgraph.adj[node]) for node in cfg.nxgraph.nodes()}
+
+#     # Predecessor list (incoming neighbors)
+#     cfg_pred_dict = {node: list(cfg.nxgraph.predecessors(node)) for node in cfg.nxgraph.nodes()}
+#     # Assumes dom_tree is a DiGraph and is indeed a tree
+#     roots = [node for node in dom_tree.nodes if dom_tree.in_degree(node) == 0]
+
+#     if len(roots) == 1:
+#         root = roots[0]
+#         # print("Root node:", root)
+#     else:
+#         print("Warning: Tree has", len(roots), "roots:", roots)
+#     children = list(dom_tree.successors(root))
+#     search_renaming_variables(children[0], dom_tree)
+
+
 
 def build_SSA(ir, cfg):
+    print(ir[3][0].rexpr)
+    input_stream = InputStream(ir[3][0].rexpr.__str__())
+    lexer = tlangLexer(input_stream)
+    tokens = lexer.getAllTokens()
+    for token in tokens:
+        print(f"{token.text:10} -> {tlangLexer.ruleNames[token.type - 1]}")
+    
     myfile.print_ir(ir)
     myfile.print_basic_blocks(cfg)
     # myfile.print_edges(cfg)
 
     dom_tree = compute_dominator_tree(cfg)
-    # myfile.print_dominator_tree(dom_tree)
+    myfile.print_dominator_tree(dom_tree)
     # dump_dominator_tree(dom_tree)
 
     dom_frontiers = compute_dominance_frontiers(cfg, dom_tree)
@@ -189,4 +250,6 @@ def build_SSA(ir, cfg):
     
     myfile.print_basic_blocks(cfg)
 
-    myfile.print_ir(ir)
+    rename_file.renaming_variables(var_set, cfg, dom_tree)
+
+    # myfile.print_ir(ir)
