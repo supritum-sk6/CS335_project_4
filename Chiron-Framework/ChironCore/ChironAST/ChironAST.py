@@ -20,6 +20,18 @@ class AssignmentCommand(Instruction):
     def __str__(self):
         return self.lvar.__str__() + " = " + self.rexpr.__str__()
 
+class PhiFunction(Instruction):
+    def __init__(self, var):
+        self.var = var
+        self.rhs_list = []
+        self.rhs = ""
+    
+    def compose_rhs(self):
+        self.rhs = f"({', '.join(f'{self.var}_{i}' for i in self.rhs_list)})"
+    
+    def ret_instruction(self):
+        self.compose_rhs()
+        return self.var.__str__() + " = " + self.rhs.__str__()
 
 class ConditionCommand(Instruction):
     def __init__(self, condition):
