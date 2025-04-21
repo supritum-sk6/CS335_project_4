@@ -12,7 +12,8 @@ def print_ir(ir):
     currIdx = 0
     while currIdx < len(ir):
         instruction, index = ir[currIdx][0], currIdx
-        print(f"Instruction {index}: {instruction} [{ir[currIdx][1]}]")
+        # print(f"Instruction {index}: {instruction} [{ir[currIdx][1]}]")
+        print(f"{instruction}")
         currIdx += 1
 
 
@@ -61,6 +62,53 @@ def print_basic_blocks(cfg):
             else:
                 print("  - [Empty Block]")
             print("\n" + "-" * 30 + "\n")  # Separator
+
+
+
+def dump_ssa(cfg):
+    """
+    Prints the basic blocks in a structured order:
+    - First, the "START" block.
+    - Then, blocks in ascending order of their names.
+    - Finally, the "END" block.
+
+    Parameters:
+    cfg (ChironCFG): The control flow graph object.
+    """
+    print("\n=== SSA ===\n")
+
+    # Extract blocks
+    start_block = None
+    end_block = None
+    numbered_blocks = []
+
+    for block in cfg:
+        if block.name == "START":
+            start_block = block
+        elif block.name == "END":
+            end_block = block
+        else:
+            try:
+                block_number = int(block.name)
+                numbered_blocks.append((block_number, block))
+            except ValueError:
+                print(f"Warning: Unexpected block name '{block.name}' (Skipping)")
+
+    # Sort numbered blocks by their numerical name
+    numbered_blocks.sort()
+
+    # Print in order: START -> Sorted Blocks -> END
+    ordered_blocks = [start_block] + [b[1] for b in numbered_blocks] + [end_block]
+
+    for block in ordered_blocks:
+        if block:
+            # print(f"Basic Block: {block.name}")
+            if block.instrlist:
+                for instr, idx in block.instrlist:
+                    print(f"{instr}")
+            # else:
+                # print("  - [Empty Block]")
+            # print("\n" + "-" * 30 + "\n")  # Separator
 
 
 

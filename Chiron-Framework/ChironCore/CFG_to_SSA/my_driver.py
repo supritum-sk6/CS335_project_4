@@ -255,4 +255,6 @@ def build_SSA(ir, cfg):
 
     myfile.print_basic_blocks(cfg)
 
+    myfile.dump_ssa(cfg)
+
     # myfile.print_ir(ir)
