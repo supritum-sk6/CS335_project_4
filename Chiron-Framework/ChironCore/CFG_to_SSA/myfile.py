@@ -101,6 +101,8 @@ def dump_ssa(cfg):
     ordered_blocks = [start_block] + [b[1] for b in numbered_blocks] + [end_block]
 
     for block in ordered_blocks:
+        if block == end_block:
+            continue
         if block:
             # print(f"Basic Block: {block.name}")
             if block.instrlist:
