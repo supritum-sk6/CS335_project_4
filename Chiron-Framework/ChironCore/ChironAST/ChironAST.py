@@ -21,13 +21,14 @@ class AssignmentCommand(Instruction):
         return self.lvar.__str__() + " = " + self.rexpr.__str__()
 
 class PhiFunction(Instruction):
-    def __init__(self, var):
+    def __init__(self, var, do_not_touch = ""):
         self.var = var
         self.rhs_list = []
         self.rhs = ""
+        self.do_not_touch = do_not_touch
     
     def compose_rhs(self):
-        self.rhs = f"phi({', '.join(f'{self.var.__str__()}_{i}' for i in self.rhs_list)})"
+        self.rhs = f"phi({', '.join(f'{self.do_not_touch.__str__()}_{i}' for i in self.rhs_list)})"
     
     def __str__(self):
         self.compose_rhs()

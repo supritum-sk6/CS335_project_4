@@ -95,9 +95,10 @@ def rename_rhs_variables(x, instr_list, rename_map, c, old_lhs):
             sup_phi = old_lhs[x][idx]
             i = c[sup_phi]
             modified_lhs = ChironAST.Var(sup_phi + "_" + i.__str__())
+            unmodified_rhs = ChironAST.Var(sup_phi)
             rename_map[sup_phi].push(i)
             c[sup_phi] = i+1
-            updated_instr.append((ChironAST.PhiFunction(modified_lhs), idx))
+            updated_instr.append((ChironAST.PhiFunction(modified_lhs, unmodified_rhs), idx))
         else:
             updated_instr.append((instr, idx))
         
