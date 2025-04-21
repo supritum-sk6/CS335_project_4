@@ -1,5 +1,4 @@
 import ChironAST.ChironAST as ChironAST
-# from typing import Dict
 
 
 
@@ -131,24 +130,22 @@ def search_renaming_variables(x, dom_tree, s, c, cfg, cfg_pred_dict, old_lhs):
                 set_ith_element(instr.rhs_list, j, s[old_var].peek())
             idx = idx + 1
         
-        if (list(dom_tree.successors(x))):
-            for y in list(dom_tree.successors(x)):
-                search_renaming_variables(y, dom_tree, s, c, cfg, cfg_pred_dict, old_lhs)
+    if (list(dom_tree.successors(x))):
+        for y in list(dom_tree.successors(x)):
+            search_renaming_variables(y, dom_tree, s, c, cfg, cfg_pred_dict, old_lhs)
 
-        curr_old_lhs_list = old_lhs[x]
-        for i in curr_old_lhs_list:
-            if (i != -1):
-                s[i].pop()
+    curr_old_lhs_list = old_lhs[x]
+    for i in curr_old_lhs_list:
+        if (i != -1):
+            s[i].pop()
 
 
 
 def renaming_variables(var_set, cfg, dom_tree):
-    for v in var_set:
-        c = {key:0 for key in var_set}
-        s = {key: Stack() for key in var_set}
-    
+    c = {key:0 for key in var_set}
+    s = {key: Stack() for key in var_set}
+
     old_lhs = dict()
-    
     for bb in cfg.nxgraph.nodes():
         old_lhs[bb] = []
         for instr, idx in bb.instrlist:
@@ -159,18 +156,19 @@ def renaming_variables(var_set, cfg, dom_tree):
             else:
                 old_lhs[bb].append(-1)
     
-    # Adjacency list (outgoing neighbors)
     cfg_adj_dict = {node: list(cfg.nxgraph.adj[node]) for node in cfg.nxgraph.nodes()}
-
-    # Predecessor list (incoming neighbors)
     cfg_pred_dict = {node: list(cfg.nxgraph.predecessors(node)) for node in cfg.nxgraph.nodes()}
-    # Assumes dom_tree is a DiGraph and is indeed a tree
-    roots = [node for node in dom_tree.nodes if dom_tree.in_degree(node) == 0]
 
+    for item in old_lhs.keys():
+        print(item.name + "->" + old_lhs[item].__str__())
+    # for item in cfg_adj_dict.keys():
+        # print(item.__str__() + "->" + cfg_adj_dict[item].__str__())
+    # for item in cfg_pred_dict.keys():
+        # print(item.__str__() + "->" + cfg_adj_dict[item].__str__())
+    
+    roots = [node for node in dom_tree.nodes if dom_tree.in_degree(node) == 0]
     if len(roots) == 1:
         root = roots[0]
-        # print("Root node:", root)
+        search_renaming_variables(root, dom_tree, s, c, cfg, cfg_pred_dict, old_lhs)
     else:
         print("Warning: Tree has", len(roots), "roots:", roots)
-    # children = list(dom_tree.successors(root))
-    search_renaming_variables(root, dom_tree, s, c, cfg, cfg_pred_dict, old_lhs)

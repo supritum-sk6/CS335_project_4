@@ -8,6 +8,7 @@ from antlr4 import *
 from turtparse.tlangLexer import tlangLexer
 
 import CFG_to_SSA.rename_file as rename_file
+import CFG_to_SSA.rename2 as rename2
 
 
 
@@ -223,7 +224,7 @@ def build_SSA(ir, cfg):
 
     dom_tree = compute_dominator_tree(cfg)
     myfile.print_dominator_tree(dom_tree)
-    # dump_dominator_tree(dom_tree)
+    dump_dominator_tree(dom_tree)
 
     dom_frontiers = compute_dominance_frontiers(cfg, dom_tree)
     # myfile.print_dominance_frontiers(dom_frontiers)
@@ -250,6 +251,8 @@ def build_SSA(ir, cfg):
     
     myfile.print_basic_blocks(cfg)
 
-    rename_file.renaming_variables(var_set, cfg, dom_tree)
+    rename2.renaming_variables(var_set, cfg, dom_tree)
+
+    myfile.print_basic_blocks(cfg)
 
     # myfile.print_ir(ir)
