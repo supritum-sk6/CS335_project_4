@@ -211,19 +211,19 @@ def place_phi_functions(var_phi_nodes_map):
 
 
 def build_SSA(ir, cfg):
-    print(ir[3][0].rexpr)
-    input_stream = InputStream(ir[3][0].rexpr.__str__())
-    lexer = tlangLexer(input_stream)
-    tokens = lexer.getAllTokens()
-    for token in tokens:
-        print(f"{token.text:10} -> {tlangLexer.ruleNames[token.type - 1]}")
+    # print(ir[3][0].rexpr)
+    # input_stream = InputStream(ir[3][0].rexpr.__str__())
+    # lexer = tlangLexer(input_stream)
+    # tokens = lexer.getAllTokens()
+    # for token in tokens:
+        # print(f"{token.text:10} -> {tlangLexer.ruleNames[token.type - 1]}")
     
     myfile.print_ir(ir)
-    myfile.print_basic_blocks(cfg)
+    # myfile.print_basic_blocks(cfg)
     # myfile.print_edges(cfg)
 
     dom_tree = compute_dominator_tree(cfg)
-    myfile.print_dominator_tree(dom_tree)
+    # myfile.print_dominator_tree(dom_tree)
     dump_dominator_tree(dom_tree)
 
     dom_frontiers = compute_dominance_frontiers(cfg, dom_tree)
@@ -242,18 +242,18 @@ def build_SSA(ir, cfg):
         # print(f"{key}: {field_values}")
     
     var_phi_nodes_map = var_identify_nodes_requiring_phi_functions_map(var_set, var_bb_map, cfg, dom_frontiers)
-    print("\n\nvar_phi_nodes_map...")
-    for key, obj_set in var_phi_nodes_map.items():
-        field_values = [obj.name for obj in obj_set]  # Extract 'field' attribute
-        print(f"{key}: {field_values}")
+    # print("\n\nvar_phi_nodes_map...")
+    # for key, obj_set in var_phi_nodes_map.items():
+        # field_values = [obj.name for obj in obj_set]  # Extract 'field' attribute
+        # print(f"{key}: {field_values}")
     
     place_phi_functions(var_phi_nodes_map)
     
-    myfile.print_basic_blocks(cfg)
+    # myfile.print_basic_blocks(cfg)
 
     rename2.renaming_variables(var_set, cfg, dom_tree)
 
-    myfile.print_basic_blocks(cfg)
+    # myfile.print_basic_blocks(cfg)
 
     myfile.dump_ssa(cfg)
 

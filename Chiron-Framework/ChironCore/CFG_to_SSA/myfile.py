@@ -9,6 +9,7 @@ def print_ir(ir):
     
     Each instruction is printed with its corresponding index.
     """
+    print("\n=== Chiron IR ===\n")
     currIdx = 0
     while currIdx < len(ir):
         instruction, index = ir[currIdx][0], currIdx

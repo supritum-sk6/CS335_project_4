@@ -26,7 +26,7 @@ def buildCFG(ir, cfgName="", isSingle=False):
     leader2IndicesMap = {startBB : -1, bb_0 : 0, endBB : len(ir)}
     indices2LeadersMap = {-1: startBB, 0: bb_0, len(ir): endBB}
 
-    print(leaderIndices)
+    # print(leaderIndices)
 
     # finding leaders in the IR
     for idx, item in enumerate(ir):
@@ -46,7 +46,7 @@ def buildCFG(ir, cfgName="", isSingle=False):
                 leader2IndicesMap[elseBranchLeader] = idx + item[1]
                 indices2LeadersMap[idx + item[1]] = elseBranchLeader
     
-    print(leaderIndices)
+    # print(leaderIndices)
 
     # print(leaderIndices)
 

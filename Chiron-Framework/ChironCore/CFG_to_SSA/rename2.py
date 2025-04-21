@@ -160,8 +160,8 @@ def renaming_variables(var_set, cfg, dom_tree):
     cfg_adj_dict = {node: list(cfg.nxgraph.adj[node]) for node in cfg.nxgraph.nodes()}
     cfg_pred_dict = {node: list(cfg.nxgraph.predecessors(node)) for node in cfg.nxgraph.nodes()}
 
-    for item in old_lhs.keys():
-        print(item.name + "->" + old_lhs[item].__str__())
+    # for item in old_lhs.keys():
+        # print(item.name + "->" + old_lhs[item].__str__())
     # for item in cfg_adj_dict.keys():
         # print(item.__str__() + "->" + cfg_adj_dict[item].__str__())
     # for item in cfg_pred_dict.keys():
